@@ -1,4 +1,4 @@
-module awfi
+module github.com/parrotmac/awfi
 
 go 1.22
 
