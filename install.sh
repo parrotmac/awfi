@@ -31,14 +31,6 @@ prerequisites() {
   fi
 }
 
-github_token() {
-  if [ -z "${GITHUB_TOKEN:-}" ]; then
-    print_error "GITHUB_TOKEN is not set. Please set it to your GitHub personal access token."
-    exit 1
-  fi
-  echo "$GITHUB_TOKEN"
-}
-
 install() {
   local latest_release_url="https://api.github.com/repos/parrotmac/awfi/releases/latest"
   verbose_print "Downloading the latest release from $latest_release_url"
@@ -68,7 +60,6 @@ install() {
   # Get the latest release download URL
   releases=$(curl -fsSL "$latest_release_url" \
         -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer $(github_token)" \
         -H "X-GitHub-Api-Version: 2022-11-28" )
   file_name="awfi_${os_name}_${arch_name}.tar.gz"
   download_url=$(echo "$releases" | jq -r '.assets[] | select(.name | test("'"$file_name"'$")) | .url')
@@ -90,7 +81,6 @@ install() {
   curl -fsSLo \
    "${temp_dir}/$file_name" \
     -H "Accept:application/octet-stream" \
-    -H "Authorization: Bearer $(github_token)" \
     "$download_url"
 
   tar -xzf "${temp_dir}/$file_name" -C "$temp_dir"
